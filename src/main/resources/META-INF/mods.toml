@@ -1,0 +1,31 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+
+[[mods]]
+modId="packcompanion"
+version="2.0.0"
+displayName="Pack Companion"
+authors="Pack Author"
+description='''整合包配套工具mod：进服欢迎提示、新手指南书发放、/packguide 指令、格雷科技线程仓（多线程配方执行）。'''
+
+[[dependencies.packcompanion]]
+modId="gtceu"
+mandatory=true
+versionRange="[7.4,7.6)"
+ordering="AFTER"
+side="BOTH"
+
+[[dependencies.packcompanion]]
+modId="forge"
+mandatory=true
+versionRange="[47,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.packcompanion]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1,1.21)"
+ordering="NONE"
+side="BOTH"

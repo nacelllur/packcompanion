@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "packcompanion:block/machine/thread_hatch_uiv",
+      "x": 90
+    },
+    "facing=east": {
+      "model": "packcompanion:block/machine/thread_hatch_uiv",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "packcompanion:block/machine/thread_hatch_uiv"
+    },
+    "facing=south": {
+      "model": "packcompanion:block/machine/thread_hatch_uiv",
+      "y": 180
+    },
+    "facing=up": {
+      "gtceu:z": 180,
+      "model": "packcompanion:block/machine/thread_hatch_uiv",
+      "x": 270
+    },
+    "facing=west": {
+      "model": "packcompanion:block/machine/thread_hatch_uiv",
+      "y": 270
+    }
+  }
+}

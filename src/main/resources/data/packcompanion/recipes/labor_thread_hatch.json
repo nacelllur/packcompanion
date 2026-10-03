@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "PMP",
+    "MHM",
+    "PEP"
+  ],
+  "key": {
+    "P": {
+      "item": "gtceu:tungsten_steel_plate"
+    },
+    "M": {
+      "item": "gtceu:auto_maintenance_hatch"
+    },
+    "H": {
+      "item": "minecraft:oak_sapling"
+    },
+    "E": {
+      "item": "minecraft:flower_pot"
+    }
+  },
+  "result": {
+    "item": "packcompanion:labor_thread_hatch",
+    "count": 1
+  }
+}

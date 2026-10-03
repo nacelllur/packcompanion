@@ -1,0 +1,17 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "com.packcompanion.mixin.compat",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "EntityMaidMixin",
+    "MaidFollowOwnerTaskMixin",
+    "TaskManagerMixin"
+  ],
+  "client": [
+    "EntityMaidRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  }
+}

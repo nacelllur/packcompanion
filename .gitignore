@@ -1,0 +1,35 @@
+# ===== GregTech: Orbital Era — packcompanion 源码仓库 =====
+# 说明：本仓库只保留 src/ 源码与构建脚本；
+#       根目录散落的调试文件、外来 mod 参考源码、依赖 jar 一律不入库。
+
+# ---------- 构建产物 / 缓存 / 依赖 ----------
+/build/
+/.gradle/
+/libs/
+/repo/
+*.jar
+*.bin
+*.bak
+*.tmp
+
+# ---------- 日志与调试临时文件 ----------
+*.log
+*.txt
+/crashzip/
+
+# ---------- 外来 mod 参考源码（仅本地查阅用） ----------
+/Mod*.java
+/ma_*.json
+
+# ---------- 临时脚本（一次性调试用） ----------
+/check_jar.py
+/dl_mixin.py
+/redl_proc.py
+
+# ---------- IDE / 系统 ----------
+.idea/
+.vscode/
+*.iml
+Thumbs.db
+Desktop.ini
+.DS_Store
