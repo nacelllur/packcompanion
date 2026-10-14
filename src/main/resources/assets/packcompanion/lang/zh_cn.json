@@ -30,5 +30,9 @@
   "block.packcompanion.labor_thread_hatch": "劳保线程仓",
   "item.packcompanion.labor_thread_hatch": "劳保线程仓",
   "packcompanion.machine.labor_thread_hatch.tooltip": "使所接入的温室同时运行多条独立配方（真·多线程）。\n同一配方只会占用一个线程，重复并行请使用并行仓。\n能耗随线程数成倍增加。",
-  "packcompanion.machine.labor_thread_hatch.greenhouse_only": "§6只能安装在温室结构中·劳保专用§r"
+  "packcompanion.machine.labor_thread_hatch.greenhouse_only": "§6只能安装在温室结构中·劳保专用§r",
+  "packcompanion.demolition.done": "已拆除 %s 个方块",
+  "packcompanion.demolition.not_formed": "目标多方块尚未成形，无需拆除",
+  "packcompanion.demolition.failed": "拆除失败：拿不到结构方块列表",
+  "packcompanion.demolition.nothing_unformed": "结构区域内没有可拆除的方块"
 }

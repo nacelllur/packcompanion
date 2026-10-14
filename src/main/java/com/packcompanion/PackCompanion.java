@@ -5,11 +5,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -46,6 +48,23 @@ public class PackCompanion {
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
         PackGuideCommand.register(event.getDispatcher());
+    }
+
+    /**
+     * 每 tick 推进一次「一键拆除」任务。
+     *
+     * <p>{@link com.packcompanion.gt.NexusDemolitionHelper} 把整台多方块的拆除摊到多 tick
+     * （每 tick 160 格）—— 一个 tick 内清掉 35³ 规模的结构会把光照/邻居更新队列压爆，
+     * 表现为服务器直接卡住几十秒。见该类的 {@code BATCH_PER_TICK}。</p>
+     */
+    @SubscribeEvent
+    public void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        var server = event.getServer();
+        if (server == null) return;
+        for (ServerLevel level : server.getAllLevels()) {
+            com.packcompanion.gt.NexusDemolitionHelper.tick(level);
+        }
     }
 
     @SubscribeEvent

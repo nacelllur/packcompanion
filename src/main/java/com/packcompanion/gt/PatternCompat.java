@@ -5,6 +5,8 @@ import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
 import com.gregtechceu.gtceu.api.pattern.TraceabilityPredicate;
 import com.gregtechceu.gtceu.api.pattern.predicates.PredicateBlocks;
 import com.gregtechceu.gtceu.api.pattern.predicates.SimplePredicate;
+import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
+import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 
 import com.mojang.logging.LogUtils;
 import com.packcompanion.Config;
@@ -117,12 +119,34 @@ public final class PatternCompat {
             "gtoecore:clone_manufacturing_chamber",
             "gtoecore:clone_maintenance_room");
 
-    /** 当前正在构建 pattern 的机器是否在「线程仓排除名单」里 */
+    /**
+     * 当前正在构建 pattern 的机器是否「不可使用线程仓」。两条判据：
+     *
+     * <ol>
+     *   <li>机器 id 在 {@link #THREAD_HATCH_EXCLUDED} 名单里（如 gtoecore 生物系主机）；</li>
+     *   <li>机器使用<b>聚变配方类型</b>（{@link GTRecipeTypes#FUSION_RECIPES}）——
+     *       聚变机器（GT 原版聚变反应堆 MK1~3、GTOE 聚变光源核心）持有共享的
+     *       {@code heat}/{@code color} 状态，且配方靠 {@code eu_to_start} 预热记账，
+     *       本质是「一条配方一台机」；多线程并行会破坏预热语义，故一律不开线程仓槽位。
+     *       <b>用配方类型而非硬编码 id 判定</b>，可自动覆盖后续新增及第三方聚变机器。</li>
+     * </ol>
+     */
     private static boolean isThreadHatchExcluded() {
         MachineDefinition definition = PatternBuildContext.current();
         if (definition == null) return false;
         ResourceLocation id = definition.getId();
-        return id != null && THREAD_HATCH_EXCLUDED.contains(id.toString());
+        if (id != null && THREAD_HATCH_EXCLUDED.contains(id.toString())) return true;
+        return usesFusionRecipes(definition);
+    }
+
+    /** 该机器是否使用聚变配方类型（用于识别聚变机器，见 {@link #isThreadHatchExcluded()}） */
+    private static boolean usesFusionRecipes(MachineDefinition definition) {
+        GTRecipeType[] types = definition.getRecipeTypes();
+        if (types == null) return false;
+        for (GTRecipeType type : types) {
+            if (type == GTRecipeTypes.FUSION_RECIPES) return true;
+        }
+        return false;
     }
 
     /** 把一批方块作为「同槽位的额外候选」追加进谓词（已存在则不重复追加） */

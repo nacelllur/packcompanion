@@ -184,6 +184,31 @@ public class MultiThreadedRecipeLogic extends RecipeLogic {
     /** 距离下次空闲搜索还需等待的 tick 数（0 = 本 tick 搜索） */
     private int searchCooldown = 0;
 
+    /**
+     * 「当前正在推进的线程配方」作用域变量 —— 仅在 {@link #handleThreadWorking} 调用
+     * {@code machine.onWorking()} 期间非空。
+     *
+     * <p><b>为什么必须有它：</b>多线程模式下原版 {@link RecipeLogic#serverTick()} 不运行，
+     * 基类 {@code lastRecipe} 恒为 null。而部分机器会在 onWorking 里读
+     * {@code getRecipeLogic().getLastRecipe()} —— 最典型是 {@code FusionReactorMachine}
+     * （第 191 行 {@code recipe.data}，只有运行时失效的 assert 兜底），拿到 null 直接
+     * NullPointerException 崩服。此处把「正在推进的那条线程配方」暴露给它：既修崩溃，
+     * 又保证读到的是当前线程真正在跑的那条（而非随便一条）。</p>
+     */
+    @Nullable
+    private GTRecipe onWorkingRecipe;
+
+    /**
+     * 对外暴露「正在推进的线程配方」：{@link #onWorkingRecipe} 非空时优先返回，
+     * 其余时刻回落到基类 {@code lastRecipe}（多线程模式下为 null，与改动前一致）。
+     * 见 {@link #onWorkingRecipe} 的说明。
+     */
+    @Override
+    public GTRecipe getLastRecipe() {
+        GTRecipe scoped = onWorkingRecipe;
+        return scoped != null ? scoped : super.getLastRecipe();
+    }
+
     public MultiThreadedRecipeLogic(IRecipeLogicMachine machine) {
         super(machine);
     }
@@ -468,7 +493,17 @@ public class MultiThreadedRecipeLogic extends RecipeLogic {
                 st.runDelay = 0;
                 st.starvedBySiblings = false;
                 passAdvanced++;
-                if (!machine.onWorking()) {
+                // 作用域内把「本线程正在推进的配方」暴露给 getLastRecipe()：
+                // FusionReactorMachine.onWorking 等机器回调会读它，多线程模式下基类
+                // lastRecipe 恒为 null，直接读会 NPE 崩服（见 onWorkingRecipe 字段说明）。
+                onWorkingRecipe = st.recipe;
+                boolean keepWorking = false;
+                try {
+                    keepWorking = machine.onWorking();
+                } finally {
+                    onWorkingRecipe = null;
+                }
+                if (!keepWorking) {
                     threadInterrupt(st);
                     return;
                 }
